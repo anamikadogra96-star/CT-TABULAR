@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Study Plan - ct-tabler</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="light-theme">
+    <div class="theme-toggle">
+        <button id="themeToggle" aria-label="Toggle theme">
+            <span class="icon">🌙</span>
+        </button>
+    </div>
+
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-section">
+                <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=100&h=100&fit=crop" alt="ct-tabler" class="logo">
+                <span class="brand-name">ct-tabler</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/calculate" class="nav-link">Calculate</a>
+                <a href="/progress" class="nav-link">Progress</a>
+            </nav>
+            <button class="mobile-menu" id="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <section class="result-page fade-in">
+        <div class="result-container">
+            <div class="result-hero">
+                <h1 class="page-title">Your Personalized Study Plan</h1>
+                <p class="page-subtitle">Based on AI analysis of your profile</p>
+            </div>
+
+            <div class="result-grid">
+                <div class="performance-card card-animate">
+                    <div class="card-header">
+                        <h2>📊 Predicted Performance</h2>
+                    </div>
+                    <div class="score-wrapper">
+                        <div class="score-circle">
+                            <svg viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" r="90" fill="none" stroke="#e0e0e0" stroke-width="20"/>
+                                <circle cx="100" cy="100" r="90" fill="none" stroke="url(#gradient)" stroke-width="20" 
+                                        stroke-dasharray="565" stroke-dashoffset="0" 
+                                        transform="rotate(-90 100 100)" class="progress-ring"/>
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#31694E;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#BBC863;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="score-text">
+                                <span class="score-number">{{ score }}</span>
+                                <span class="score-total">/100</span>
+                            </div>
+                        </div>
+                        <div class="level-badge {{ level|lower }}">
+                            <span class="level-icon">
+                                {% if level == 'High' %}🌟
+                                {% elif level == 'Medium' %}⭐
+                                {% else %}📈{% endif %}
+                            </span>
+                            {{ level }} Performance
+                        </div>
+                    </div>
+                    <div class="performance-image">
+                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop" alt="Study Success">
+                    </div>
+                </div>
+
+                <div class="timetable-card card-animate">
+                    <div class="card-header">
+                        <h2>📅 Daily Study Schedule</h2>
+                        <p>Optimized for your success</p>
+                    </div>
+                    <div class="timetable-list">
+                        {% for slot in timetable %}
+                        <div class="time-slot">
+                            <div class="time-indicator">
+                                <span class="time-dot"></span>
+                                <span class="time-label">{{ slot.time }}</span>
+                            </div>
+                            <div class="activity-info">
+                                <span class="activity-text">{{ slot.activity }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-update-card card-animate">
+                <div class="card-header">
+                    <h2>📝 Update Today's Progress</h2>
+                    <p>Track your daily study hours to monitor improvement</p>
+                </div>
+                <form id="progressForm" class="progress-form-grid">
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon">📐</span>
+                            Math Hours
+                        </label>
+                        <input type="number" step="0.5" min="0" name="math_hours" 
+                               value="{{ study_hours.math_hours }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon">📚</span>
+                            Reading Hours
+                        </label>
+                        <input type="number" step="0.5" min="0" name="reading_hours" 
+                               value="{{ study_hours.reading_hours }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <span class="label-icon">✍️</span>
+                            Writing Hours
+                        </label>
+                        <input type="number" step="0.5" min="0" name="writing_hours" 
+                               value="{{ study_hours.writing_hours }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span>Save Progress</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                    </button>
+                </form>
+                <div id="message"></div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span>Back to Home</span>
+                </a>
+                <a href="/progress" class="btn btn-primary">
+                    <span>View Progress Tracker</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ct-tabler</h3>
+                <p>Empowering students with AI-driven study solutions</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="/">Home</a>
+                <a href="/calculate">Calculate</a>
+                <a href="/progress">Progress</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Made with ❤️ for students</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ct-tabler. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('.icon');
+            icon.textContent = body.classList.contains('dark-theme') ? '☀️' : '🌙';
+        });
+
+        // Mobile Menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Fade-in Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in, .card-animate').forEach(el => observer.observe(el));
+
+        // Progress Ring Animation
+        const score = {{ score }};
+        const circumference = 2 * Math.PI * 90;
+        const offset = circumference - (score / 100) * circumference;
+        document.querySelector('.progress-ring').style.strokeDashoffset = offset;
+
+        // Progress Form Submission
+        document.getElementById('progressForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>Saving...</span>';
+            
+            try {
+                const response = await fetch('/save_progress', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                const messageDiv = document.getElementById('message');
+                if (data.success) {
+                    messageDiv.innerHTML = `
+                        <div class="message success">
+                            <span class="message-icon">✅</span>
+                            <div>
+                                <strong>${data.message}</strong>
+                                <p>Progress: ${data.progress.toFixed(1)}%</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="message error">
+                            <span class="message-icon">❌</span>
+                            <strong>${data.message}</strong>
+                        </div>
+                    `;
+                }
+                
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 5000);
+            } catch (error) {
+                document.getElementById('message').innerHTML = `
+                    <div class="message error">
+                        <span class="message-icon">❌</span>
+                        <strong>Error saving progress</strong>
+                    </div>
+                `;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <span>Save Progress</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracker - ct-tabler</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="light-theme">
+    <div class="theme-toggle">
+        <button id="themeToggle" aria-label="Toggle theme">
+            <span class="icon">🌙</span>
+        </button>
+    </div>
+
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-section">
+                <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=100&h=100&fit=crop" alt="ct-tabler" class="logo">
+                <span class="brand-name">ct-tabler</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/calculate" class="nav-link">Calculate</a>
+                <a href="/progress" class="nav-link active">Progress</a>
+            </nav>
+            <button class="mobile-menu" id="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <section class="progress-page fade-in">
+        <div class="progress-container">
+            <div class="progress-hero">
+                <h1 class="page-title">📈 Progress Tracker</h1>
+                <p class="page-subtitle">Monitor your daily study habits and improvement</p>
+            </div>
+
+            <div class="stats-overview card-animate">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="totalHours">0</span>
+                        <span class="stat-label">Total Hours</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="streakDays">0</span>
+                        <span class="stat-label">Day Streak</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="avgProgress">0%</span>
+                        <span class="stat-label">Avg Progress</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="goalProgress">0%</span>
+                        <span class="stat-label">Goal Progress</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-section card-animate">
+                <div class="chart-header">
+                    <h2>📊 Progress Over Time</h2>
+                    <div class="chart-legend">
+                        <span class="legend-item">
+                            <span class="legend-dot" style="background: var(--primary)"></span>
+                            Daily Progress
+                        </span>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+
+            <div class="subjects-breakdown card-animate">
+                <h2>📖 Subject Breakdown</h2>
+                <div class="subjects-grid">
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <span class="subject-icon">📐</span>
+                            <span class="subject-name">Math</span>
+                        </div>
+                        <div class="subject-hours" id="mathTotal">0h</div>
+                        <div class="subject-bar">
+                            <div class="subject-progress" id="mathBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <span class="subject-icon">📚</span>
+                            <span class="subject-name">Reading</span>
+                        </div>
+                        <div class="subject-hours" id="readingTotal">0h</div>
+                        <div class="subject-bar">
+                            <div class="subject-progress" id="readingBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-header">
+                            <span class="subject-icon">✍️</span>
+                            <span class="subject-name">Writing</span>
+                        </div>
+                        <div class="subject-hours" id="writingTotal">0h</div>
+                        <div class="subject-bar">
+                            <div class="subject-progress" id="writingBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-table-card card-animate">
+                <div class="table-header">
+                    <h2>📋 Detailed History</h2>
+                    <button class="btn btn-sm" onclick="exportData()">
+                        <span>Export</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="progress-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Math</th>
+                                <th>Reading</th>
+                                <th>Writing</th>
+                                <th>Total</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in data %}
+                            <tr>
+                                <td>{{ entry.Date }}</td>
+                                <td>{{ entry.Math_Hours }}h</td>
+                                <td>{{ entry.Reading_Hours }}h</td>
+                                <td>{{ entry.Writing_Hours }}h</td>
+                                <td><strong>{{ entry.Total_Hours }}h</strong></td>
+                                <td>
+                                    <div class="progress-cell">
+                                        <span>{{ entry['Progress_%']|round(1) }}%</span>
+                                        <div class="mini-bar">
+                                            <div class="mini-progress" style="width: {{ entry['Progress_%'] }}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if entry['Progress_%'] >= 100 %}
+                                    <span class="status-badge success">✓ Complete</span>
+                                    {% elif entry['Progress_%'] >= 50 %}
+                                    <span class="status-badge warning">⚡ Good</span>
+                                    {% else %}
+                                    <span class="status-badge info">📈 In Progress</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span>Back to Home</span>
+                </a>
+                <a href="/calculate" class="btn btn-primary">
+                    <span>New Study Plan</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ct-tabler</h3>
+                <p>Empowering students with AI-driven study solutions</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="/">Home</a>
+                <a href="/calculate">Calculate</a>
+                <a href="/progress">Progress</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Made with ❤️ for students</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ct-tabler. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const progressData = {{ data|tojson }};
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('.icon');
+            icon.textContent = body.classList.contains('dark-theme') ? '☀️' : '🌙';
+            renderChart();
+        });
+
+        // Mobile Menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Fade-in Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in, .card-animate').forEach(el => observer.observe(el));
+
+        // Calculate Statistics
+        if (progressData.length > 0) {
+            const totalHours = progressData.reduce((sum, entry) => sum + entry.Total_Hours, 0);
+            const avgProgress = progressData.reduce((sum, entry) => sum + entry['Progress_%'], 0) / progressData.length;
+            const streakDays = progressData.length;
+            const goalProgress = Math.min(100, (totalHours / (progressData.length * 5)) * 100);
+
+            document.getElementById('totalHours').textContent = totalHours.toFixed(1);
+            document.getElementById('streakDays').textContent = streakDays;
+            document.getElementById('avgProgress').textContent = avgProgress.toFixed(1) + '%';
+            document.getElementById('goalProgress').textContent = goalProgress.toFixed(1) + '%';
+
+            // Subject totals
+            const mathTotal = progressData.reduce((sum, entry) => sum + entry.Math_Hours, 0);
+            const readingTotal = progressData.reduce((sum, entry) => sum + entry.Reading_Hours, 0);
+            const writingTotal = progressData.reduce((sum, entry) => sum + entry.Writing_Hours, 0);
+            const maxHours = Math.max(mathTotal, readingTotal, writingTotal);
+
+            document.getElementById('mathTotal').textContent = mathTotal.toFixed(1) + 'h';
+            document.getElementById('readingTotal').textContent = readingTotal.toFixed(1) + 'h';
+            document.getElementById('writingTotal').textContent = writingTotal.toFixed(1) + 'h';
+
+            document.getElementById('mathBar').style.width = (mathTotal / maxHours * 100) + '%';
+            document.getElementById('readingBar').style.width = (readingTotal / maxHours * 100) + '%';
+            document.getElementById('writingBar').style.width = (writingTotal / maxHours * 100) + '%';
+        }
+
+        // Chart
+        let progressChart;
+
+        function renderChart() {
+            const isDark = body.classList.contains('dark-theme');
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            
+            if (progressChart) {
+                progressChart.destroy();
+            }
+
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: progressData.map(d => d.Date),
+                    datasets: [{
+                        label: 'Daily Progress %',
+                        data: progressData.map(d => d['Progress_%']),
+                        borderColor: isDark ? '#F0E491' : '#31694E',
+                        backgroundColor: isDark ? 'rgba(240, 228, 145, 0.1)' : 'rgba(49, 105, 78, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: isDark ? '#F0E491' : '#31694E',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: isDark ? 'rgba(26, 45, 46, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                            titleColor: isDark ? '#F0E491' : '#31694E',
+                            bodyColor: isDark ? '#BBC863' : '#658C58',
+                            borderColor: isDark ? '#F0E491' : '#31694E',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: isDark ? 'rgba(240, 228, 145, 0.1)' : 'rgba(49, 105, 78, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#BBC863' : '#658C58',
+                                callback: (value) => value + '%'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: isDark ? 'rgba(240, 228, 145, 0.1)' : 'rgba(49, 105, 78, 0.1)'
+                            },
+                            ticks: {
+                                color: isDark ? '#BBC863' : '#658C58'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        renderChart();
+
+        // Export Data
+        function exportData() {
+            const csv = [
+                ['Date', 'Math Hours', 'Reading Hours', 'Writing Hours', 'Total Hours', 'Progress %'],
+                ...progressData.map(entry => [
+                    entry.Date,
+                    entry.Math_Hours,
+                    entry.Reading_Hours,
+                    entry.Writing_Hours,
+                    entry.Total_Hours,
+                    entry['Progress_%']
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'study-progress.csv';
+            a.click();
+        }
+    </script>
+</body>
+</html>

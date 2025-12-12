@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ct-tabler - AI-Powered Study Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="light-theme">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" aria-label="Toggle theme">
+            <span class="icon">🌙</span>
+        </button>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo-section">
+                <span class="brand-name">CT-Tabler</span>
+            </div>
+            <nav class="nav-links">
+
+            </nav>
+            <button class="mobile-menu" id="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section fade-in">
+        <div class="hero-overlay"></div>
+        <div class="hero-content-wrapper">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Transform Your Studies with
+                    <span class="gradient-text">AI-Powered Learning</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Get personalized study recommendations tailored to your schedule, learning style, and goals. Powered by advanced machine learning algorithms.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="scrollToSection('form-section')">
+                        <span>Get Started</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-secondary" onclick="scrollToSection('features')">
+                        Learn More
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-label">Study Sessions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">Plans Created</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop" alt="Students studying together" class="hero-img">
+                    <div class="floating-card card-1">
+                        <div class="card-icon">📚</div>
+                        <div class="card-text">Smart Learning</div>
+                    </div>
+                    <div class="floating-card card-2">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-text">Goal Tracking</div>
+                    </div>
+                    <div class="floating-card card-3">
+                        <div class="card-icon">⚡</div>
+                        <div class="card-text">Quick Results</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll Down</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section fade-in">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose ct-tabler?</h2>
+            <p class="section-subtitle">Everything you need to excel in your studies</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered Predictions</h3>
+                <p>Advanced machine learning algorithms analyze your profile to predict performance and create optimal study plans.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Progress Tracking</h3>
+                <p>Monitor your daily study hours and track your improvement with beautiful, interactive charts.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3>Personalized Timetables</h3>
+                <p>Get custom study schedules based on your predicted performance and learning needs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Performance Analytics</h3>
+                <p>Detailed insights into your study patterns and performance metrics to optimize learning.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⏰</div>
+                <h3>Smart Scheduling</h3>
+                <p>Balanced timetables that include breaks, revision, and practice sessions for maximum efficiency.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌟</div>
+                <h3>Goal Achievement</h3>
+                <p>Set targets and watch your progress as you work towards your academic goals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section id="form-section" class="form-section fade-in">
+        <div class="form-wrapper">
+            <div class="form-image">
+                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=800&fit=crop" alt="Student with laptop">
+                <div class="image-overlay">
+                    <h3>Start Your Journey</h3>
+                    <p>Fill out the form to receive your personalized study plan in seconds</p>
+                </div>
+            </div>
+            <div class="form-content">
+                <h2>Generate Your Personalized Plan</h2>
+                <p class="form-description">Answer a few questions to get started</p>
+                <form action="/predict" method="POST" class="study-form">
+                    <div class="form-group">
+                        <label for="gender">
+                            <span class="label-icon">👤</span>
+                            Gender
+                        </label>
+                        <select name="gender" id="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="race">
+                            <span class="label-icon">🌍</span>
+                            Race/Ethnicity
+                        </label>
+                        <select name="race" id="race" required>
+                            <option value="">Select Group</option>
+                            <option value="0">Group A</option>
+                            <option value="1">Group B</option>
+                            <option value="2">Group C</option>
+                            <option value="3">Group D</option>
+                            <option value="4">Group E</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="parent_edu">
+                            <span class="label-icon">🎓</span>
+                            Parental Education Level
+                        </label>
+                        <select name="parent_edu" id="parent_edu" required>
+                            <option value="">Select Level</option>
+                            <option value="0">Some High School</option>
+                            <option value="1">High School</option>
+                            <option value="2">Some College</option>
+                            <option value="3">Associate's Degree</option>
+                            <option value="4">Bachelor's Degree</option>
+                            <option value="5">Master's Degree</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lunch">
+                            <span class="label-icon">🍽️</span>
+                            Lunch Type
+                        </label>
+                        <select name="lunch" id="lunch" required>
+                            <option value="">Select Type</option>
+                            <option value="0">Standard</option>
+                            <option value="1">Free/Reduced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test_prep">
+                            <span class="label-icon">📝</span>
+                            Test Preparation Course
+                        </label>
+                        <select name="test_prep" id="test_prep" required>
+                            <option value="">Select Status</option>
+                            <option value="0">None</option>
+                            <option value="1">Completed</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span>Generate Study Plan</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ct-tabler</h3>
+                <p>Empowering students with AI-driven study solutions</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info </h4>
+                <a href="/">anamika12@gmail.com</a>
+                <a href="/">989732xxx</a>
+                <a href="/">Himachal pardesh ,INDIA</a>
+            </div>
+            <div class="footer-section">
+                <h4>Myself</h4>
+                <p>Made with ❤️ for students BY Anamika(CT)</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ct-tabler. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('.icon');
+            icon.textContent = body.classList.contains('dark-theme') ? '☀️' : '🌙';
+        });
+
+        // Mobile Menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Smooth Scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Intersection Observer for Fade-in Animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroOverlay = document.querySelector('.hero-overlay');
+            if (heroOverlay) {
+                heroOverlay.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
